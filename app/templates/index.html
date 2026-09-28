@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>BoundaryPass | Cricket tickets</title>
+  <link rel="stylesheet" href="{{ url_for('static', path='/css/style.css') }}">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/">🏏 BoundaryPass</a>
+    <span class="topbar-note">Your seat. Your match. Your moment.</span>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="hero-content">
+        <span class="eyebrow">INTERNATIONAL CRICKET & IPL</span>
+        <h1>Be there when the<br><em>crowd comes alive.</em></h1>
+        <p>Discover upcoming cricket matches and find your place in the stands.</p>
+        <a class="button" href="#matches">Explore matches <span aria-hidden="true">↗</span></a>
+      </div>
+      <div class="hero-art" aria-hidden="true">
+        <div class="sun"></div>
+        <div class="ball">✦</div>
+        <div class="pitch"></div>
+      </div>
+    </section>
+
+    <section id="matches" class="matches-section">
+      <div class="section-heading">
+        <div>
+          <span class="eyebrow">THE LINEUP</span>
+          <h2>Upcoming matches</h2>
+        </div>
+        <p>Choose a match and reserve up to six tickets.</p>
+      </div>
+
+      <div class="match-grid">
+        {% for match in matches %}
+        <article class="match-card">
+          <div class="card-top">
+            <span class="badge">{{ match.series }}</span>
+            <span class="date">{{ match.match_date }}</span>
+          </div>
+          <div class="card-icon" aria-hidden="true">🏟️</div>
+          <h3>{{ match.teams }}</h3>
+          <p class="venue">📍 {{ match.venue }}</p>
+          <p class="availability">
+            <span id="remaining-{{ match.id }}">{{ match.available_tickets }}</span>
+            tickets available
+          </p>
+          <div class="card-bottom">
+            <div><small>Price per ticket</small><strong>₹{{ match.price }}</strong></div>
+            <button class="book-button" type="button"
+                    data-match-id="{{ match.id }}"
+                    data-match-name="{{ match.teams }}"
+                    {% if match.available_tickets == 0 %}disabled{% endif %}>
+              Book tickets
+            </button>
+          </div>
+        </article>
+        {% endfor %}
+      </div>
+    </section>
+
+    <dialog id="booking-dialog">
+      <form id="booking-form">
+        <button class="close-button" type="button" id="close-dialog" aria-label="Close">×</button>
+        <span class="eyebrow">RESERVE YOUR PLACE</span>
+        <h2 id="dialog-match">Book tickets</h2>
+        <input type="hidden" id="match-id">
+
+        <label for="customer-name">Your name</label>
+        <input id="customer-name" name="name" type="text" minlength="2" maxlength="100" required>
+
+        <label for="customer-email">Email address</label>
+        <input id="customer-email" name="email" type="email" maxlength="254" required>
+
+        <label for="ticket-quantity">Number of tickets</label>
+        <input id="ticket-quantity" name="quantity" type="number" min="1" max="6" value="1" required>
+
+        <button class="button submit-button" type="submit">Confirm booking</button>
+        <p id="booking-message" role="status" aria-live="polite"></p>
+      </form>
+    </dialog>
+  </main>
+
+  <footer>BoundaryPass · Cricket is better from the stands.</footer>
+
+  <script>
+    const dialog = document.getElementById("booking-dialog");
+    const form = document.getElementById("booking-form");
+    const message = document.getElementById("booking-message");
+
+    document.querySelectorAll(".book-button").forEach((button) => {
+      button.addEventListener("click", () => {
+        form.reset();
+        message.textContent = "";
+        document.getElementById("match-id").value = button.dataset.matchId;
+        document.getElementById("dialog-match").textContent = button.dataset.matchName;
+        dialog.showModal();
+      });
+    });
+
+    document.getElementById("close-dialog").addEventListener("click", () => dialog.close());
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const submitButton = form.querySelector('button[type="submit"]');
+      submitButton.disabled = true;
+      message.textContent = "Saving your booking...";
+
+      const payload = {
+        match_id: Number(document.getElementById("match-id").value),
+        customer_name: document.getElementById("customer-name").value,
+        customer_email: document.getElementById("customer-email").value,
+        quantity: Number(document.getElementById("ticket-quantity").value)
+      };
+
+      try {
+        const response = await fetch("/api/bookings", {
+          method: "POST",
+          headers: {"Content-Type": "application/json"},
+          body: JSON.stringify(payload)
+        });
+        const result = await response.json();
+
+        if (!response.ok) {
+          message.textContent = typeof result.detail === "string"
+            ? result.detail : "Please check your details and try again.";
+          return;
+        }
+
+        message.textContent =
+          `Booking #${result.booking_id} confirmed! ${result.quantity} ticket(s), total ₹${result.total_price}.`;
+        const remaining = document.getElementById(`remaining-${payload.match_id}`);
+        remaining.textContent = Number(remaining.textContent) - payload.quantity;
+        form.reset();
+      } catch {
+        message.textContent = "Could not connect to the server. Please try again.";
+      } finally {
+        submitButton.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>
