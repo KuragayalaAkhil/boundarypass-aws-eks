@@ -1,0 +1,56 @@
+# Create the managed Kubernetes control plane in the supplied private subnets.
+resource "aws_eks_cluster" "this" {
+  name     = var.cluster_name
+  role_arn = aws_iam_role.cluster.arn
+  version  = "1.35"
+
+  access_config {
+    # Use the EKS API for authentication and grant the creator initial admin access.
+    authentication_mode                         = "API"
+    bootstrap_cluster_creator_admin_permissions = true
+  }
+
+  vpc_config {
+    # Enable both endpoints so the API can be reached privately or over the internet.
+    subnet_ids              = var.private_subnet_ids
+    endpoint_private_access = true
+    endpoint_public_access  = true
+    public_access_cidrs = [var.api_access_cidr]
+  }
+
+  depends_on = [aws_iam_role_policy_attachment.cluster]
+
+  tags = {
+    Project = "boundarypass"
+  }
+}
+
+# Creates EC2 worker nodes in private subnets to run the application and Argo CD.
+resource "aws_eks_node_group" "this" {
+  cluster_name    = aws_eks_cluster.this.name
+  node_group_name = "${var.cluster_name}-nodes"
+  node_role_arn   = aws_iam_role.nodes.arn
+  subnet_ids      = var.private_subnet_ids
+
+  # Start with two nodes so workloads can run across both availability zones.
+  scaling_config {
+    desired_size = 2
+    min_size     = 2
+    max_size     = 2
+  }
+
+  instance_types = ["t3.medium"]
+  capacity_type  = "ON_DEMAND"
+  disk_size      = 30
+
+  # Ensure IAM permissions are attached before AWS launches the nodes.
+  depends_on = [
+    aws_iam_role_policy_attachment.nodes_worker,
+    aws_iam_role_policy_attachment.nodes_registry,
+    aws_iam_role_policy_attachment.nodes_cni
+  ]
+
+  tags = {
+    Project = "boundarypass"
+  }
+}
