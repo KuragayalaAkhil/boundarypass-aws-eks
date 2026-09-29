@@ -37,6 +37,11 @@ jobs:
       - name: Run automated tests
         run: python -m pytest -v
 
+      - name: Scan code with SonarQube Cloud
+        uses: SonarSource/sonarqube-scan-action@v8
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
       - name: Build Docker image
         run: docker build -t boundarypass:ci .
 
