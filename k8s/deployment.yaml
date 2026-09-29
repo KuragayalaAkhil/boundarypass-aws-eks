@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: boundarypass
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: boundarypass
+  template:
+    metadata:
+      labels:
+        app: boundarypass
+    spec:
+      containers:
+        - name: boundarypass
+          image: kuragayalaakhil/boundarypass:latest
+          ports:
+            - containerPort: 8000
