@@ -1,0 +1,43 @@
+name: BoundaryPass CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  test-build-scan:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+          cache: pip
+          cache-dependency-path: requirements-dev.txt
+
+      - name: Install dependencies
+        run: python -m pip install -r requirements-dev.txt
+
+      - name: Run automated tests
+        run: python -m pytest -v
+
+      - name: Build Docker image
+        run: docker build -t boundarypass:ci .
+
+      - name: Scan Docker image with Trivy
+        uses: aquasecurity/trivy-action@0.36.0
+        with:
+          image-ref: boundarypass:ci
+          format: table
+          severity: HIGH,CRITICAL
+          ignore-unfixed: true
+          exit-code: "1"
