@@ -1,8 +1,8 @@
 # Create the managed Kubernetes control plane in the supplied private subnets.
 resource "aws_eks_cluster" "this" {
-  name     = var.cluster_name
-  role_arn = aws_iam_role.cluster.arn
-  version  = "1.35"
+  name                      = var.cluster_name
+  role_arn                  = aws_iam_role.cluster.arn
+  version                   = "1.35"
   enabled_cluster_log_types = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
 
   access_config {
@@ -16,13 +16,14 @@ resource "aws_eks_cluster" "this" {
     subnet_ids              = var.private_subnet_ids
     endpoint_private_access = true
     endpoint_public_access  = true
-    public_access_cidrs = [var.api_access_cidr]
+    public_access_cidrs     = [var.api_access_cidr]
   }
 
   depends_on = [aws_iam_role_policy_attachment.cluster]
 
   tags = {
-    Project = "boundarypass"
+    Project                                = "boundarypass"
+    "alpha.eksctl.io/cluster-oidc-enabled" = "true"
   }
 }
 
