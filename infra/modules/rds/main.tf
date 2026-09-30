@@ -41,10 +41,13 @@ resource "aws_db_instance" "this" {
   username                    = "boundarypassadmin"
   manage_master_user_password = true
 
-  multi_az               = true
-  publicly_accessible    = false
-  db_subnet_group_name   = aws_db_subnet_group.this.name
-  vpc_security_group_ids = [aws_security_group.this.id]
+  multi_az                        = true
+  publicly_accessible             = false
+  db_subnet_group_name            = aws_db_subnet_group.this.name
+  vpc_security_group_ids          = [aws_security_group.this.id]
+  auto_minor_version_upgrade      = true
+  copy_tags_to_snapshot           = true
+  enabled_cloudwatch_logs_exports = ["postgresql", "upgrade"]
 
   # This lab is destroyed between sessions to stop database charges.
   # Take a manual RDS snapshot first if you need to keep booking data.
