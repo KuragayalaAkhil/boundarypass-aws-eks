@@ -11,6 +11,22 @@ permissions:
   contents: write
 
 jobs:
+  infra-scan:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v6
+
+      - name: Install Checkov
+        run: python -m pip install checkov
+
+      - name: Scan Terraform with Checkov
+        run: checkov --directory infra --framework terraform
+
+      - name: Scan Kubernetes manifests with Checkov
+        run: checkov --directory k8s --framework kubernetes
+
   test-build-scan:
     runs-on: ubuntu-latest
 
@@ -24,15 +40,6 @@ jobs:
         uses: gitleaks/gitleaks-action@v3
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Install Checkov
-        run: python -m pip install checkov
-
-      - name: Scan Terraform with Checkov
-        run: checkov --directory infra --framework terraform
-
-      - name: Scan Kubernetes manifests with Checkov
-        run: checkov --directory k8s --framework kubernetes
 
       - name: Set up Python
         uses: actions/setup-python@v6
