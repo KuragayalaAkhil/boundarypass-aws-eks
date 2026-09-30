@@ -14,6 +14,6 @@ spec:
     spec:
       containers:
         - name: boundarypass
-          image: kuragayalaakhil/boundarypass:latest
+          image: kuragayalaakhil/boundarypass:c5c5a2d3427d54f4dd76abe3e7913612607d2cb4
           ports:
             - containerPort: 8000
