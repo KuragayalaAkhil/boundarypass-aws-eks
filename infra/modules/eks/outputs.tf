@@ -14,3 +14,9 @@ output "node_group_name" {
   description = "Name of the managed EC2 worker node group"
   value       = aws_eks_node_group.this.node_group_name
 }
+
+# Managed worker nodes use this EKS cluster security group.
+output "cluster_security_group_id" {
+  description = "Security group used by the EKS managed nodes"
+  value       = aws_eks_cluster.this.vpc_config[0].cluster_security_group_id
+}

@@ -19,3 +19,14 @@ output "node_group_name" {
   description = "Name of the managed worker node group"
   value       = module.eks.node_group_name
 }
+
+# Connection details for configuring BoundaryPass in Kubernetes.
+output "database_endpoint" {
+  description = "Private PostgreSQL endpoint and port"
+  value       = module.rds.endpoint
+}
+
+output "database_master_secret_arn" {
+  description = "Secrets Manager ARN for the RDS master credentials"
+  value       = module.rds.master_user_secret_arn
+}

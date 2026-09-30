@@ -10,6 +10,19 @@ resource "aws_vpc" "this" {
   }
 }
 
+# Remove the default security group's allow-all rules.
+# EKS and RDS use their own security groups.
+resource "aws_default_security_group" "this" {
+  vpc_id  = aws_vpc.this.id
+  ingress = []
+  egress  = []
+
+  tags = {
+    Name    = "${var.project_name}-default-deny"
+    Project = var.project_name
+  }
+}
+
 # Public subnets host internet-facing load balancers and the NAT gateway.
 resource "aws_subnet" "public" {
   for_each = var.public_subnets
@@ -17,7 +30,7 @@ resource "aws_subnet" "public" {
   vpc_id                  = aws_vpc.this.id
   cidr_block              = each.value.cidr
   availability_zone       = each.value.az
-  map_public_ip_on_launch = true
+  map_public_ip_on_launch = false
 
   tags = {
     Name                     = "${var.project_name}-public-${each.key}"

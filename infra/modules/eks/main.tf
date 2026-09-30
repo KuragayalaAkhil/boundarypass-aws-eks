@@ -3,6 +3,7 @@ resource "aws_eks_cluster" "this" {
   name     = var.cluster_name
   role_arn = aws_iam_role.cluster.arn
   version  = "1.35"
+  enabled_cluster_log_types = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
 
   access_config {
     # Use the EKS API for authentication and grant the creator initial admin access.

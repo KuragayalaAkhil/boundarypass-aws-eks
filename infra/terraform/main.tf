@@ -25,3 +25,13 @@ module "eks" {
   private_subnet_ids = module.vpc.private_subnet_ids
   api_access_cidr    = var.eks_api_access_cidr
 }
+
+# Place the Multi-AZ PostgreSQL database in the VPC's private subnets.
+# Allow connections from the EKS managed nodes.
+module "rds" {
+  source = "../modules/rds"
+
+  vpc_id                        = module.vpc.vpc_id
+  private_subnet_ids            = module.vpc.private_subnet_ids
+  eks_cluster_security_group_id = module.eks.cluster_security_group_id
+}
