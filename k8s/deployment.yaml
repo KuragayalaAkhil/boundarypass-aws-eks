@@ -3,7 +3,12 @@ kind: Deployment
 metadata:
   name: boundarypass
 spec:
-  replicas: 1
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
   selector:
     matchLabels:
       app: boundarypass
@@ -12,6 +17,14 @@ spec:
       labels:
         app: boundarypass
     spec:
+      topologySpreadConstraints:
+        - maxSkew: 1
+          minDomains: 2
+          topologyKey: topology.kubernetes.io/zone
+          whenUnsatisfiable: DoNotSchedule
+          labelSelector:
+            matchLabels:
+              app: boundarypass
       containers:
         - name: boundarypass
           image: kuragayalaakhil/boundarypass:c5c5a2d3427d54f4dd76abe3e7913612607d2cb4
@@ -23,3 +36,14 @@ spec:
                 secretKeyRef:
                   name: boundarypass-db
                   key: DATABASE_URL
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 10
+            periodSeconds: 20
