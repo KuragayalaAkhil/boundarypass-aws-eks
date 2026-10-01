@@ -2,7 +2,7 @@
 
 BoundaryPass is a short lived learning environment. The application release job
 runs separately from the infrastructure Checkov scan. The latest scan has
-100 passed checks and 13 failed checks. These findings remain visible in CI.
+101 passed checks and 12 failed checks. These findings remain visible in CI.
 
 | Check | Resource | Decision |
 | --- | --- | --- |
@@ -13,7 +13,7 @@ runs separately from the infrastructure Checkov scan. The latest scan has
 | CKV_AWS_293 | RDS | Deletion protection is disabled for the planned snapshot and destroy workflow. Take a manual snapshot before destroying the database if booking data must be kept. |
 | CKV_AWS_118 | RDS | Enhanced Monitoring is not enabled. Review its operational need and cost. |
 | CKV_AWS_158 | VPC flow logs | The CloudWatch log group has no customer managed KMS key. Review key management before production use. |
-| CKV_AWS_338 | VPC flow logs | Rejected traffic logs are retained for 7 days to limit storage in this short lived lab. |
+| CKV_AWS_338 | VPC flow logs | Resolved: rejected VPC traffic logs are retained for 365 days. |
 | CKV2_AWS_62 | Terraform state S3 bucket | Event notifications have no consumer in this project. Add them only with a defined monitoring workflow. |
 | CKV2_AWS_30 | RDS | Statement query logging is not enabled. Review log volume and sensitive data exposure before attaching a custom parameter group. |
 | CKV_AWS_18 | Terraform state S3 bucket | Bucket access logging is not configured. Review a separate logging destination and retention policy. |

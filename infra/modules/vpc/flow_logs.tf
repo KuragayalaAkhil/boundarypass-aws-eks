@@ -1,7 +1,7 @@
-# Keep rejected network traffic logs briefly for troubleshooting.
+# Keep rejected network traffic logs for one year for troubleshooting.
 resource "aws_cloudwatch_log_group" "vpc_flow_logs" {
   name              = "/boundarypass/vpc-flow-logs"
-  retention_in_days = 7
+  retention_in_days = 365
 
   tags = {
     Project = var.project_name
