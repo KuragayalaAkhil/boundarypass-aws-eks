@@ -28,6 +28,31 @@ resource "aws_vpc_security_group_ingress_rule" "from_eks" {
   description                  = "PostgreSQL from EKS nodes"
 }
 
+data "aws_iam_policy_document" "monitoring_assume_role" {
+  statement {
+    actions = ["sts:AssumeRole"]
+
+    principals {
+      type        = "Service"
+      identifiers = ["monitoring.rds.amazonaws.com"]
+    }
+  }
+}
+
+resource "aws_iam_role" "monitoring" {
+  name               = "boundarypass-rds-monitoring"
+  assume_role_policy = data.aws_iam_policy_document.monitoring_assume_role.json
+
+  tags = {
+    Project = "boundarypass"
+  }
+}
+
+resource "aws_iam_role_policy_attachment" "monitoring" {
+  role       = aws_iam_role.monitoring.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonRDSEnhancedMonitoringRole"
+}
+
 # RDS manages the master password in Secrets Manager.
 # Multi-AZ maintains a standby database in another Availability Zone.
 resource "aws_db_instance" "this" {
@@ -48,6 +73,11 @@ resource "aws_db_instance" "this" {
   auto_minor_version_upgrade      = true
   copy_tags_to_snapshot           = true
   enabled_cloudwatch_logs_exports = ["postgresql", "upgrade"]
+
+  monitoring_interval = 60
+  monitoring_role_arn = aws_iam_role.monitoring.arn
+
+  depends_on = [aws_iam_role_policy_attachment.monitoring]
 
   # This lab is destroyed between sessions to stop database charges.
   # Take a manual RDS snapshot first if you need to keep booking data.
