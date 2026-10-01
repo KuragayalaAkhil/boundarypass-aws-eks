@@ -8,7 +8,8 @@ runs separately from the infrastructure Checkov scan. The latest scan has
 | --- | --- | --- |
 | CKV_AWS_58 | EKS | Explicit customer managed KMS encryption for Kubernetes secrets is not configured. Review before production use. |
 | CKV_AWS_39 | EKS | The public API endpoint is needed for administration from the laptop and is restricted by `api_access_cidr`. Use private access only when an administrative network path is available. |
-| CKV_AWS_353 | RDS | Performance Insights is not enabled in this short lived lab. Review cost and retention before enabling. |
+| CKV_AWS_353 | RDS | Resolved: Database Insights Standard collects detailed metrics with 7-day retention. |
+| CKV_AWS_354 | RDS | Database Insights uses an AWS-managed KMS key. A customer-managed key adds key management and cost; review before production use. |
 | CKV_AWS_161 | RDS | The app uses a Secrets Manager managed database password. IAM database authentication requires an application and database user migration. |
 | CKV_AWS_293 | RDS | Deletion protection is disabled for the planned snapshot and destroy workflow. Take a manual snapshot before destroying the database if booking data must be kept. |
 | CKV_AWS_118 | RDS | Resolved: RDS Enhanced Monitoring runs at a 60-second interval using the dedicated monitoring IAM role. CloudWatch Logs usage adds cost. |

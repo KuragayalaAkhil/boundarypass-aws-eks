@@ -79,6 +79,10 @@ resource "aws_db_instance" "this" {
 
   depends_on = [aws_iam_role_policy_attachment.monitoring]
 
+  database_insights_mode                = "standard"
+  performance_insights_enabled          = true
+  performance_insights_retention_period = 7
+
   # This lab is destroyed between sessions to stop database charges.
   # Take a manual RDS snapshot first if you need to keep booking data.
   deletion_protection = false
