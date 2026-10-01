@@ -6,7 +6,7 @@ runs separately from the infrastructure Checkov scan. The latest scan has
 
 | Check | Resource | Decision |
 | --- | --- | --- |
-| CKV_AWS_58 | EKS | Explicit customer managed KMS encryption for Kubernetes secrets is not configured. Review before production use. |
+| CKV_AWS_58 | EKS | EKS 1.35 encrypts Kubernetes API data by default. No customer-managed KMS key is configured; review key control and cost before production use. |
 | CKV_AWS_39 | EKS | The public API endpoint is needed for administration from the laptop and is restricted by `api_access_cidr`. Use private access only when an administrative network path is available. |
 | CKV_AWS_353 | RDS | Resolved: Database Insights Standard collects detailed metrics with 7-day retention. |
 | CKV_AWS_354 | RDS | Database Insights uses an AWS-managed KMS key. A customer-managed key adds key management and cost; review before production use. |
