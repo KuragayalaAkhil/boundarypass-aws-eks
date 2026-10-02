@@ -61,7 +61,7 @@ resource "aws_db_instance" "this" {
   #checkov:skip=CKV_AWS_293:Deletion protection is disabled for the manual snapshot and destroy workflow
   #checkov:skip=CKV2_AWS_30:Statement logging is deferred due to log volume and booking data exposure
   identifier                  = "boundarypass-db"
-  snapshot_identifier         = "boundarypass-db-20261002"
+  snapshot_identifier         = var.snapshot_identifier
   engine                      = "postgres"
   instance_class              = "db.t4g.small"
   allocated_storage           = 20

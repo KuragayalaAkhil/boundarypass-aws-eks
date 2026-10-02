@@ -13,3 +13,9 @@ variable "eks_cluster_security_group_id" {
   description = "Security group attached to EKS managed worker nodes"
   type        = string
 }
+
+variable "snapshot_identifier" {
+  description = "Manual RDS snapshot to restore; select the snapshot for this session"
+  type        = string
+  nullable    = false
+}
