@@ -16,7 +16,7 @@ decisions use resource-specific Checkov exceptions and appear as skipped.
 | CKV_AWS_118 | RDS | Resolved: RDS Enhanced Monitoring runs at a 60-second interval using the dedicated monitoring IAM role. CloudWatch Logs usage adds cost. |
 | CKV_AWS_158 | VPC flow logs | Resolved: a customer-managed KMS key encrypts new VPC flow log events, with key use restricted to this log group. Retain the key while encrypted logs need to remain readable. |
 | CKV_AWS_338 | VPC flow logs | Resolved: rejected VPC traffic logs are retained for 365 days. |
-| CKV2_AWS_62 | Terraform state S3 bucket | Event notifications have no consumer in this project. Add them only with a defined monitoring workflow. |
+| CKV2_AWS_62 | Terraform state S3 bucket | Resolved: S3 sends object creation and deletion events through EventBridge to a KMS-encrypted CloudWatch log group with 365-day retention. Delivery was verified with a temporary object. |
 | CKV2_AWS_30 | RDS | Resolved: the PostgreSQL parameter group logs DDL and queries taking at least one second. Restrict access to PostgreSQL logs because queries may contain sensitive data. |
 | CKV_AWS_18 | Terraform state S3 bucket | Bucket access logging is not configured. Review a separate logging destination and retention policy. |
 | CKV_AWS_144 | Terraform state S3 bucket | Cross region replication is not configured for this short lived lab. Review disaster recovery requirements and cost. |
