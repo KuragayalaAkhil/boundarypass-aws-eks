@@ -98,12 +98,40 @@ jobs:
         env:
           IMAGE: kuragayalaakhil/boundarypass:${{ github.sha }}
         run: |
-          # Record the image built and pushed by this workflow.
-          /tmp/yq -i '.spec.template.spec.containers[0].image = strenv(IMAGE)' k8s/deployment.yaml
+          # Check main again; another run may have recorded this image.
+          git fetch origin main
+          remote_image="$(git show origin/main:k8s/deployment.yaml |
+            /tmp/yq -r '.spec.template.spec.containers[0].image')"
 
+          if [ "$remote_image" = "$IMAGE" ]; then
+            echo "Image is already recorded on main."
+            exit 0
+          fi
+
+          # Do not replace the image selected by a newer source commit.
+          if [ "$(git rev-parse origin/main)" != "$GITHUB_SHA" ]; then
+            echo "main advanced; skipping this older image update."
+            exit 0
+          fi
+
+          /tmp/yq -i '.spec.template.spec.containers[0].image = strenv(IMAGE)' k8s/deployment.yaml
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add k8s/deployment.yaml
-          git diff --cached --quiet && exit 0
           git commit -m "Update BoundaryPass image to ${GITHUB_SHA}"
-          git push origin HEAD:main
+
+          if git push origin HEAD:main; then
+            exit 0
+          fi
+
+          # Treat an identical concurrent update as success.
+          git fetch origin main
+          remote_image="$(git show origin/main:k8s/deployment.yaml |
+            /tmp/yq -r '.spec.template.spec.containers[0].image')"
+          if [ "$remote_image" = "$IMAGE" ]; then
+            echo "Another run recorded the same image."
+            exit 0
+          fi
+
+          # A newer push has its own workflow run.
+          echo "main changed during this run; skipping its stale image update."
