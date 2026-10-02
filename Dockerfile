@@ -10,6 +10,9 @@ COPY requirements.txt .
 RUN python -m pip install --no-cache-dir -r requirements.txt \
     && python -m pip uninstall -y msgpack setuptools pip
     
+# Trust the published Amazon RDS CA bundle for verified PostgreSQL TLS.
+RUN python -c "from urllib.request import urlopen; from pathlib import Path; Path('/app/rds-global-bundle.pem').write_bytes(urlopen('https://truststore.pki.rds.amazonaws.com/global/global-bundle.pem', timeout=30).read())"
+
 COPY app/ app/
 
 RUN useradd --create-home appuser

@@ -4,3 +4,6 @@ jinja2>=3.1,<4
 sqlalchemy>=2.0,<3
 psycopg[binary]>=3.2,<4
 prometheus-client>=0.22,<1
+
+# Generate RDS IAM login tokens using EKS Pod Identity credentials.
+boto3>=1.35,<2
