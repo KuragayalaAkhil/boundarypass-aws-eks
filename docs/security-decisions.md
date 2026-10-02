@@ -36,5 +36,5 @@ a Kubernetes Secret environment variable; file-based delivery needs an app
 change. EKS network policy enforcement is not configured, so adding a
 NetworkPolicy manifest alone would not enforce traffic restrictions.
 
-Checkov exceptions for CKV_K8S_21, CKV_K8S_43, CKV_K8S_35, and CKV2_K8S_6
+Checkov exceptions for CKV_K8S_21, CKV_K8S_43, and CKV2_K8S_6
 are scoped to the BoundaryPass manifests. Reassess them before production use.
