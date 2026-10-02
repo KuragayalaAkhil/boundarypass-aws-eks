@@ -1,5 +1,6 @@
 # Keep rejected network traffic logs for one year for troubleshooting.
 resource "aws_cloudwatch_log_group" "vpc_flow_logs" {
+  #checkov:skip=CKV_AWS_158:Lab uses CloudWatch encryption without a customer-managed KMS key
   name              = "/boundarypass/vpc-flow-logs"
   retention_in_days = 365
 

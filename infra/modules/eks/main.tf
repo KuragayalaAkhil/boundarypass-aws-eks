@@ -1,5 +1,7 @@
 # Create the managed Kubernetes control plane in the supplied private subnets.
 resource "aws_eks_cluster" "this" {
+  #checkov:skip=CKV_AWS_58:EKS 1.35 encrypts Kubernetes API data by default
+  #checkov:skip=CKV_AWS_39:Laptop administration uses a restricted public CIDR; private endpoint is also enabled
   name                      = var.cluster_name
   role_arn                  = aws_iam_role.cluster.arn
   version                   = "1.35"

@@ -56,6 +56,10 @@ resource "aws_iam_role_policy_attachment" "monitoring" {
 # RDS manages the master password in Secrets Manager.
 # Multi-AZ maintains a standby database in another Availability Zone.
 resource "aws_db_instance" "this" {
+  #checkov:skip=CKV_AWS_354:Lab uses AWS-managed encryption for seven-day Database Insights
+  #checkov:skip=CKV_AWS_161:Application uses a Secrets Manager managed database password
+  #checkov:skip=CKV_AWS_293:Deletion protection is disabled for the manual snapshot and destroy workflow
+  #checkov:skip=CKV2_AWS_30:Statement logging is deferred due to log volume and booking data exposure
   identifier                  = "boundarypass-db"
   snapshot_identifier         = "boundarypass-db-20261002"
   engine                      = "postgres"

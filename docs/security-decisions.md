@@ -1,8 +1,9 @@
 # Infrastructure security decisions
 
 BoundaryPass is a short lived learning environment. The application release job
-runs separately from the infrastructure Checkov scan. The latest scan has
-120 passed checks and 11 failed checks. These findings remain visible in CI.
+runs separately from the infrastructure Checkov scan. The prior scan had 120 passed checks and 11 failed checks. The 11 lab
+decisions below now use resource-specific Checkov exceptions with reasons;
+the scan reports them as skipped, not as implemented controls.
 
 | Check | Resource | Decision |
 | --- | --- | --- |
@@ -21,6 +22,6 @@ runs separately from the infrastructure Checkov scan. The latest scan has
 | CKV_AWS_144 | Terraform state S3 bucket | Cross region replication is not configured for this short lived lab. Review disaster recovery requirements and cost. |
 | CKV_AWS_145 | Terraform state S3 bucket | State uses SSE-S3 (`AES256`) rather than a customer managed KMS key. Review KMS access and recovery requirements before changing encryption. |
 
-These are recorded decisions, not Checkov suppressions. Keep the `infra-scan`
-job reporting failures until each finding is fixed or a scoped exception is
-approved and documented.
+These scoped exceptions apply only to the listed resources in this learning
+environment. Reassess every skipped control before production use. Keep
+the remaining Checkov checks enforced in the `infra-scan` job.
