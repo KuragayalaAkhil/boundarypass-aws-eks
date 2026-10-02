@@ -53,13 +53,32 @@ resource "aws_iam_role_policy_attachment" "monitoring" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonRDSEnhancedMonitoringRole"
 }
 
+# Log schema changes and queries taking at least one second.
+resource "aws_db_parameter_group" "logging" {
+  name   = "boundarypass-postgres18-logging"
+  family = "postgres18"
+
+  parameter {
+    name  = "log_statement"
+    value = "ddl"
+  }
+
+  parameter {
+    name  = "log_min_duration_statement"
+    value = "1000"
+  }
+
+  tags = {
+    Project = "boundarypass"
+  }
+}
+
 # RDS manages the master password in Secrets Manager.
 # Multi-AZ maintains a standby database in another Availability Zone.
 resource "aws_db_instance" "this" {
   #checkov:skip=CKV_AWS_354:Lab uses AWS-managed encryption for seven-day Database Insights
   #checkov:skip=CKV_AWS_161:Application uses a Secrets Manager managed database password
   #checkov:skip=CKV_AWS_293:Deletion protection is disabled for the manual snapshot and destroy workflow
-  #checkov:skip=CKV2_AWS_30:Statement logging is deferred due to log volume and booking data exposure
   identifier                  = "boundarypass-db"
   snapshot_identifier         = var.snapshot_identifier
   engine                      = "postgres"
@@ -74,6 +93,7 @@ resource "aws_db_instance" "this" {
   multi_az                        = true
   publicly_accessible             = false
   db_subnet_group_name            = aws_db_subnet_group.this.name
+  parameter_group_name            = aws_db_parameter_group.logging.name
   vpc_security_group_ids          = [aws_security_group.this.id]
   auto_minor_version_upgrade      = true
   copy_tags_to_snapshot           = true

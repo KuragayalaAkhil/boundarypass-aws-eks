@@ -17,7 +17,7 @@ the scan reports them as skipped, not as implemented controls.
 | CKV_AWS_158 | VPC flow logs | The CloudWatch log group has no customer managed KMS key. Review key management before production use. |
 | CKV_AWS_338 | VPC flow logs | Resolved: rejected VPC traffic logs are retained for 365 days. |
 | CKV2_AWS_62 | Terraform state S3 bucket | Event notifications have no consumer in this project. Add them only with a defined monitoring workflow. |
-| CKV2_AWS_30 | RDS | Statement query logging is not enabled. Review log volume and sensitive data exposure before attaching a custom parameter group. |
+| CKV2_AWS_30 | RDS | Resolved: the PostgreSQL parameter group logs DDL and queries taking at least one second. Restrict access to PostgreSQL logs because queries may contain sensitive data. |
 | CKV_AWS_18 | Terraform state S3 bucket | Bucket access logging is not configured. Review a separate logging destination and retention policy. |
 | CKV_AWS_144 | Terraform state S3 bucket | Cross region replication is not configured for this short lived lab. Review disaster recovery requirements and cost. |
 | CKV_AWS_145 | Terraform state S3 bucket | State uses SSE-S3 (`AES256`) rather than a customer managed KMS key. Review KMS access and recovery requirements before changing encryption. |
