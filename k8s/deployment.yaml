@@ -5,8 +5,7 @@ metadata:
   annotations:
     checkov.io/skip1: CKV_K8S_21=Namespace migration requires moving the live Secret and ingress
     checkov.io/skip2: CKV_K8S_43=CI uses a commit-specific image tag; digest pinning is deferred
-    checkov.io/skip3: CKV_K8S_35=Application currently reads the managed database Secret from an environment variable
-    checkov.io/skip4: CKV2_K8S_6=EKS network policy enforcement is not configured for this lab
+    checkov.io/skip3: CKV2_K8S_6=EKS network policy enforcement is not configured for this lab
 spec:
   replicas: 2
   strategy:
@@ -65,11 +64,13 @@ spec:
           ports:
             - containerPort: 8000
           env:
-            - name: DATABASE_URL
-              valueFrom:
-                secretKeyRef:
-                  name: boundarypass-db
-                  key: DATABASE_URL
+            # Pod Identity supplies AWS credentials; no database password is mounted.
+            - name: DATABASE_AUTH_MODE
+              value: iam
+            - name: DATABASE_HOST
+              value: boundarypass-db.cvoqeo60akme.ap-south-1.rds.amazonaws.com
+            - name: AWS_REGION
+              value: ap-south-1
           readinessProbe:
             httpGet:
               path: /health
