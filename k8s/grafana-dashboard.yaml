@@ -1,0 +1,14 @@
+{
+  "apiVersion": "v1",
+  "kind": "ConfigMap",
+  "metadata": {
+    "name": "boundarypass-grafana-dashboard",
+    "namespace": "monitoring",
+    "labels": {
+      "grafana_dashboard": "1"
+    }
+  },
+  "data": {
+    "boundarypass.json": "{\"uid\": \"boundarypass-app\", \"title\": \"BoundaryPass Application\", \"schemaVersion\": 39, \"version\": 1, \"refresh\": \"30s\", \"time\": {\"from\": \"now-1h\", \"to\": \"now\"}, \"panels\": [{\"id\": 1, \"title\": \"Application requests per second\", \"type\": \"timeseries\", \"datasource\": {\"type\": \"prometheus\", \"uid\": \"prometheus\"}, \"gridPos\": {\"x\": 0, \"y\": 0, \"w\": 12, \"h\": 8}, \"fieldConfig\": {\"defaults\": {\"unit\": \"reqps\"}, \"overrides\": []}, \"targets\": [{\"refId\": \"A\", \"datasource\": {\"type\": \"prometheus\", \"uid\": \"prometheus\"}, \"expr\": \"sum by (route, status) (rate(boundarypass_http_requests_total{route!=\\\"/health\\\"}[5m]))\", \"legendFormat\": \"{{route}} {{status}}\"}]}, {\"id\": 2, \"title\": \"Server errors per second\", \"type\": \"timeseries\", \"datasource\": {\"type\": \"prometheus\", \"uid\": \"prometheus\"}, \"gridPos\": {\"x\": 12, \"y\": 0, \"w\": 12, \"h\": 8}, \"fieldConfig\": {\"defaults\": {\"unit\": \"reqps\"}, \"overrides\": []}, \"targets\": [{\"refId\": \"A\", \"datasource\": {\"type\": \"prometheus\", \"uid\": \"prometheus\"}, \"expr\": \"sum by (route, status) (rate(boundarypass_http_requests_total{status=~\\\"5..\\\"}[5m]))\", \"legendFormat\": \"{{route}} {{status}}\"}]}, {\"id\": 3, \"title\": \"95th percentile response time\", \"type\": \"timeseries\", \"datasource\": {\"type\": \"prometheus\", \"uid\": \"prometheus\"}, \"gridPos\": {\"x\": 0, \"y\": 8, \"w\": 12, \"h\": 8}, \"fieldConfig\": {\"defaults\": {\"unit\": \"s\"}, \"overrides\": []}, \"targets\": [{\"refId\": \"A\", \"datasource\": {\"type\": \"prometheus\", \"uid\": \"prometheus\"}, \"expr\": \"histogram_quantile(0.95, sum by (le, route) (rate(boundarypass_http_request_duration_seconds_bucket{route!=\\\"/health\\\"}[5m])))\", \"legendFormat\": \"{{route}} {{status}}\"}]}]}"
+  }
+}
