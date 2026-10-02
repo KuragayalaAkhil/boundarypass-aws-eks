@@ -25,3 +25,16 @@ the scan reports them as skipped, not as implemented controls.
 These scoped exceptions apply only to the listed resources in this learning
 environment. Reassess every skipped control before production use. Keep
 the remaining Checkov checks enforced in the `infra-scan` job.
+
+## Kubernetes manifest exceptions
+
+The application remains in the default namespace while its database Secret,
+Service, and ALB Ingress are live. Moving them requires a coordinated migration.
+CI uses a commit-specific Docker Hub tag; digest pinning is deferred. The
+application currently reads its Secrets Manager managed database password from
+a Kubernetes Secret environment variable; file-based delivery needs an app
+change. EKS network policy enforcement is not configured, so adding a
+NetworkPolicy manifest alone would not enforce traffic restrictions.
+
+Checkov exceptions for CKV_K8S_21, CKV_K8S_43, CKV_K8S_35, and CKV2_K8S_6
+are scoped to the BoundaryPass manifests. Reassess them before production use.

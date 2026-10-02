@@ -2,6 +2,11 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: boundarypass
+  annotations:
+    checkov.io/skip1: CKV_K8S_21=Namespace migration requires moving the live Secret and ingress
+    checkov.io/skip2: CKV_K8S_43=CI uses a commit-specific image tag; digest pinning is deferred
+    checkov.io/skip3: CKV_K8S_35=Application currently reads the managed database Secret from an environment variable
+    checkov.io/skip4: CKV2_K8S_6=EKS network policy enforcement is not configured for this lab
 spec:
   replicas: 2
   strategy:

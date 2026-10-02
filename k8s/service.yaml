@@ -2,6 +2,8 @@ apiVersion: v1
 kind: Service
 metadata:
   name: boundarypass
+  annotations:
+    checkov.io/skip1: CKV_K8S_21=Service stays with the live application in the default namespace
   labels:
     app: boundarypass
 spec:
