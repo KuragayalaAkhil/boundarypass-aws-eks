@@ -22,6 +22,8 @@ spec:
       labels:
         app: boundarypass
     spec:
+      # EKS Pod Identity maps this account to the limited database IAM role.
+      serviceAccountName: boundarypass-app
       automountServiceAccountToken: false
       securityContext:
         runAsNonRoot: true
