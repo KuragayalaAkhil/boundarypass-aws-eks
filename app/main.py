@@ -1,8 +1,10 @@
 from contextlib import asynccontextmanager
 from pathlib import Path
+from time import perf_counter
 
 from fastapi import FastAPI, HTTPException, Request
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, Response
+from prometheus_client import CONTENT_TYPE_LATEST, Counter, Histogram, generate_latest
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel, Field
@@ -22,6 +24,44 @@ async def lifespan(app: FastAPI):
 app = FastAPI(title="BoundaryPass Cricket Tickets", lifespan=lifespan)
 app.mount("/static", StaticFiles(directory=BASE_DIR / "static"), name="static")
 templates = Jinja2Templates(directory=BASE_DIR / "templates")
+
+
+HTTP_REQUESTS = Counter(
+    "boundarypass_http_requests_total",
+    "HTTP requests handled by BoundaryPass",
+    ["method", "route", "status"],
+)
+HTTP_REQUEST_DURATION = Histogram(
+    "boundarypass_http_request_duration_seconds",
+    "BoundaryPass HTTP request duration in seconds",
+    ["method", "route"],
+)
+
+
+@app.middleware("http")
+async def observe_requests(request: Request, call_next):
+    started = perf_counter()
+    status = "500"
+    try:
+        response = await call_next(request)
+        status = str(response.status_code)
+        return response
+    finally:
+        route = request.scope.get("route")
+        route_name = getattr(route, "path", "unmatched")
+        if route_name != "/metrics":
+            HTTP_REQUESTS.labels(request.method, route_name, status).inc()
+            HTTP_REQUEST_DURATION.labels(request.method, route_name).observe(
+                perf_counter() - started
+            )
+
+
+@app.get("/metrics", include_in_schema=False)
+def metrics():
+    return Response(
+        content=generate_latest(),
+        headers={"Content-Type": CONTENT_TYPE_LATEST},
+    )
 
 
 class BookingRequest(BaseModel):

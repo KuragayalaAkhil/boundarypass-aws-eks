@@ -57,6 +57,7 @@ resource "aws_iam_role_policy_attachment" "monitoring" {
 # Multi-AZ maintains a standby database in another Availability Zone.
 resource "aws_db_instance" "this" {
   identifier                  = "boundarypass-db"
+  snapshot_identifier         = "boundarypass-db-20261002"
   engine                      = "postgres"
   instance_class              = "db.t4g.small"
   allocated_storage           = 20
