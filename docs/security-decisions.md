@@ -20,7 +20,7 @@ decisions use resource-specific Checkov exceptions and appear as skipped.
 | CKV2_AWS_30 | RDS | Resolved: the PostgreSQL parameter group logs DDL and queries taking at least one second. Restrict access to PostgreSQL logs because queries may contain sensitive data. |
 | CKV_AWS_18 | Terraform state S3 bucket | Bucket access logging is not configured. Review a separate logging destination and retention policy. |
 | CKV_AWS_144 | Terraform state S3 bucket | Cross region replication is not configured for this short lived lab. Review disaster recovery requirements and cost. |
-| CKV_AWS_145 | Terraform state S3 bucket | State uses SSE-S3 (`AES256`) rather than a customer managed KMS key. Review KMS access and recovery requirements before changing encryption. |
+| CKV_AWS_145 | Terraform state S3 bucket | Resolved: the bucket defaults to SSE-KMS with a customer managed key and S3 Bucket Keys. The Terraform backend uses that key for state and lock writes; a lock version was verified as SSE-KMS. Retain the key while any encrypted state version may be needed. |
 
 These scoped exceptions apply only to the listed resources in this learning
 environment. Reassess every skipped control before production use. Keep

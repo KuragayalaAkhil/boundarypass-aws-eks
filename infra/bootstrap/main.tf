@@ -19,7 +19,6 @@ provider "aws" {
 resource "aws_s3_bucket" "terraform_state" {
   #checkov:skip=CKV_AWS_18:Separate access-log bucket is outside this short-lived lab
   #checkov:skip=CKV_AWS_144:Single-region lab retains state object versions instead of cross-region replication
-  #checkov:skip=CKV_AWS_145:State bucket uses SSE-S3 rather than a customer-managed KMS key
   bucket = "boundarypass-terraform-state-697858907754"
 
   tags = {
@@ -48,8 +47,11 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "terraform_state" 
 
   rule {
     apply_server_side_encryption_by_default {
-      sse_algorithm = "AES256"
+      kms_master_key_id = aws_kms_key.terraform_state.arn
+      sse_algorithm     = "aws:kms"
     }
+
+    bucket_key_enabled = true
   }
 }
 

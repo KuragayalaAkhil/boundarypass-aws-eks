@@ -6,6 +6,7 @@ terraform {
     key          = "boundarypass/eks/terraform.tfstate"
     region       = "ap-south-1"
     encrypt      = true
+    kms_key_id   = "arn:aws:kms:ap-south-1:697858907754:key/6b008eca-9b96-47cf-8762-96994231eb39"
     use_lockfile = true
   }
 }
