@@ -83,17 +83,17 @@ resource "aws_db_parameter_group" "logging" {
 # Multi-AZ maintains a standby database in another Availability Zone.
 resource "aws_db_instance" "this" {
   #checkov:skip=CKV_AWS_354:Lab uses AWS-managed encryption for seven-day Database Insights
-  #checkov:skip=CKV_AWS_161:Application uses a Secrets Manager managed database password
-  identifier                  = "boundarypass-db"
-  snapshot_identifier         = var.snapshot_identifier
-  engine                      = "postgres"
-  instance_class              = "db.t4g.small"
-  allocated_storage           = 20
-  storage_type                = "gp3"
-  storage_encrypted           = true
-  db_name                     = "boundarypass"
-  username                    = "boundarypassadmin"
-  manage_master_user_password = true
+  identifier                          = "boundarypass-db"
+  snapshot_identifier                 = var.snapshot_identifier
+  engine                              = "postgres"
+  instance_class                      = "db.t4g.small"
+  allocated_storage                   = 20
+  storage_type                        = "gp3"
+  storage_encrypted                   = true
+  db_name                             = "boundarypass"
+  username                            = "boundarypassadmin"
+  manage_master_user_password         = true
+  iam_database_authentication_enabled = true
 
   multi_az                        = true
   publicly_accessible             = false

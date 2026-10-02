@@ -11,7 +11,7 @@ decisions use resource-specific Checkov exceptions and appear as skipped.
 | CKV_AWS_39 | EKS | The public API endpoint is needed for administration from the laptop and is restricted by `api_access_cidr`. Use private access only when an administrative network path is available. |
 | CKV_AWS_353 | RDS | Resolved: Database Insights Standard collects detailed metrics with 7-day retention. |
 | CKV_AWS_354 | RDS | Database Insights uses an AWS-managed KMS key. A customer-managed key adds key management and cost; review before production use. |
-| CKV_AWS_161 | RDS | The app uses a Secrets Manager managed database password. IAM database authentication requires an application and database user migration. |
+| CKV_AWS_161 | RDS | RDS IAM database authentication is enabled. The application still uses its Secrets Manager managed password; migration to a dedicated IAM database user and EKS workload identity remains pending. |
 | CKV_AWS_293 | RDS | Resolved: deletion protection is enabled. For a planned teardown, verify that a manual snapshot is available before deliberately disabling protection and destroying the instance. |
 | CKV_AWS_118 | RDS | Resolved: RDS Enhanced Monitoring runs at a 60-second interval using the dedicated monitoring IAM role. CloudWatch Logs usage adds cost. |
 | CKV_AWS_158 | VPC flow logs | Resolved: a customer-managed KMS key encrypts new VPC flow log events, with key use restricted to this log group. Retain the key while encrypted logs need to remain readable. |
