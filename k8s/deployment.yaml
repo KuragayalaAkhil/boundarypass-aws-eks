@@ -27,7 +27,7 @@ spec:
               app: boundarypass
       containers:
         - name: boundarypass
-          image: kuragayalaakhil/boundarypass:4aa687207211d3d7085c5ac4788c6d763bf132fb
+          image: kuragayalaakhil/boundarypass:2a3c9e23c21fe63f9409f05851f69e64a9983ed8
           ports:
             - containerPort: 8000
           env:
