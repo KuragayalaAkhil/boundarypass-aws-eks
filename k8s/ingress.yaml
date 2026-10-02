@@ -8,6 +8,8 @@ metadata:
     alb.ingress.kubernetes.io/healthcheck-path: /health
     alb.ingress.kubernetes.io/listen-ports: '[{"HTTP":80},{"HTTPS":443}]'
     alb.ingress.kubernetes.io/ssl-redirect: "443"
+    alb.ingress.kubernetes.io/actions.block-metrics: >-
+      {"type":"fixed-response","fixedResponseConfig":{"contentType":"text/plain","statusCode":"403","messageBody":"Forbidden"}}
     alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:ap-south-1:697858907754:certificate/14163cd3-7744-4ff1-ad24-27b4c56a2d5b
 spec:
   ingressClassName: alb
@@ -15,6 +17,13 @@ spec:
     - host: boundarypass.kuragayalas.xyz
       http:
         paths:
+          - path: /metrics
+            pathType: Prefix
+            backend:
+              service:
+                name: block-metrics
+                port:
+                  name: use-annotation
           - path: /
             pathType: Prefix
             backend:
