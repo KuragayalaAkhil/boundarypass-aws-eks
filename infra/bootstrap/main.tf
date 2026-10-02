@@ -17,7 +17,7 @@ provider "aws" {
 }
 
 resource "aws_s3_bucket" "terraform_state" {
-  #checkov:skip=CKV_AWS_18:Separate access-log bucket is outside this short-lived lab
+  #checkov:skip=CKV_AWS_18:Access logs use CloudWatch vended delivery, which this Checkov rule does not recognize
   #checkov:skip=CKV_AWS_144:Single-region lab retains state object versions instead of cross-region replication
   bucket = "boundarypass-terraform-state-697858907754"
 
