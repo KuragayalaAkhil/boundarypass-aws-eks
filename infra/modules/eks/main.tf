@@ -58,3 +58,17 @@ resource "aws_eks_node_group" "this" {
     Project = "boundarypass"
   }
 }
+
+# Runs on each EKS worker node to provide temporary AWS credentials
+# to pods through EKS Pod Identity.
+resource "aws_eks_addon" "pod_identity_agent" {
+  cluster_name = aws_eks_cluster.this.name
+  addon_name   = "eks-pod-identity-agent"
+
+  # The agent runs as a DaemonSet, so worker nodes must exist first.
+  depends_on = [aws_eks_node_group.this]
+
+  tags = {
+    Project = "boundarypass"
+  }
+}
