@@ -84,7 +84,6 @@ resource "aws_db_parameter_group" "logging" {
 resource "aws_db_instance" "this" {
   #checkov:skip=CKV_AWS_354:Lab uses AWS-managed encryption for seven-day Database Insights
   #checkov:skip=CKV_AWS_161:Application uses a Secrets Manager managed database password
-  #checkov:skip=CKV_AWS_293:Deletion protection is disabled for the manual snapshot and destroy workflow
   identifier                  = "boundarypass-db"
   snapshot_identifier         = var.snapshot_identifier
   engine                      = "postgres"
@@ -116,7 +115,7 @@ resource "aws_db_instance" "this" {
 
   # This lab is destroyed between sessions to stop database charges.
   # Take a manual RDS snapshot first if you need to keep booking data.
-  deletion_protection = false
+  deletion_protection = true
   skip_final_snapshot = true
 
   tags = {
