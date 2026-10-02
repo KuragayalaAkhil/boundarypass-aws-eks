@@ -17,6 +17,16 @@ spec:
       labels:
         app: boundarypass
     spec:
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        runAsGroup: 10001
+        seccompProfile:
+          type: RuntimeDefault
+      volumes:
+        - name: tmp
+          emptyDir: {}
       topologySpreadConstraints:
         - maxSkew: 1
           minDomains: 2
@@ -28,6 +38,23 @@ spec:
       containers:
         - name: boundarypass
           image: kuragayalaakhil/boundarypass:e7e8b6f8ceaf7d25f0684b57adfb3b1bf7f3258e
+          imagePullPolicy: Always
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
           ports:
             - containerPort: 8000
           env:
