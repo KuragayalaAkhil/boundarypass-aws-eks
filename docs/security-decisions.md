@@ -1,9 +1,9 @@
 # Infrastructure security decisions
 
 BoundaryPass is a short lived learning environment. The application release job
-runs separately from the infrastructure Checkov scan. The prior scan had 120 passed checks and 11 failed checks. The 11 lab
-decisions below now use resource-specific Checkov exceptions with reasons;
-the scan reports them as skipped, not as implemented controls.
+runs separately from the infrastructure Checkov scan. The original scan had 120 passed checks and 11 failed checks. Controls
+marked Resolved below have since been implemented. The remaining lab
+decisions use resource-specific Checkov exceptions and appear as skipped.
 
 | Check | Resource | Decision |
 | --- | --- | --- |
@@ -14,7 +14,7 @@ the scan reports them as skipped, not as implemented controls.
 | CKV_AWS_161 | RDS | The app uses a Secrets Manager managed database password. IAM database authentication requires an application and database user migration. |
 | CKV_AWS_293 | RDS | Deletion protection is disabled for the planned snapshot and destroy workflow. Take a manual snapshot before destroying the database if booking data must be kept. |
 | CKV_AWS_118 | RDS | Resolved: RDS Enhanced Monitoring runs at a 60-second interval using the dedicated monitoring IAM role. CloudWatch Logs usage adds cost. |
-| CKV_AWS_158 | VPC flow logs | The CloudWatch log group has no customer managed KMS key. Review key management before production use. |
+| CKV_AWS_158 | VPC flow logs | Resolved: a customer-managed KMS key encrypts new VPC flow log events, with key use restricted to this log group. Retain the key while encrypted logs need to remain readable. |
 | CKV_AWS_338 | VPC flow logs | Resolved: rejected VPC traffic logs are retained for 365 days. |
 | CKV2_AWS_62 | Terraform state S3 bucket | Event notifications have no consumer in this project. Add them only with a defined monitoring workflow. |
 | CKV2_AWS_30 | RDS | Resolved: the PostgreSQL parameter group logs DDL and queries taking at least one second. Restrict access to PostgreSQL logs because queries may contain sensitive data. |

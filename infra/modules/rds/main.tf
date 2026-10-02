@@ -59,8 +59,9 @@ resource "aws_db_parameter_group" "logging" {
   family = "postgres18"
 
   parameter {
-    name  = "rds.force_ssl"
-    value = "1"
+    name         = "rds.force_ssl"
+    value        = "1"
+    apply_method = "pending-reboot"
   }
 
   parameter {
