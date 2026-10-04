@@ -33,7 +33,7 @@ spec:
       volumes:
         - name: tmp
           emptyDir: {}
-           # Spread each deployment revision across both availability zones.
+          # Spread each deployment revision across both availability zones.
       topologySpreadConstraints:
         - maxSkew: 1
           minDomains: 2
@@ -46,7 +46,7 @@ spec:
               app: boundarypass
       containers:
         - name: boundarypass
-          image: kuragayalaakhil/boundarypass:145da0ae7b3abc0ad560c75ada9261782e220182
+          image: kuragayalaakhil/boundarypass:12ef426f90b16b1d119025f0769311b44b4e2e50
           imagePullPolicy: Always
           resources:
             requests:
