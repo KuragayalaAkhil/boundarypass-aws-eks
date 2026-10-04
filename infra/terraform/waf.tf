@@ -55,6 +55,29 @@ resource "aws_wafv2_web_acl" "boundarypass" {
     }
   }
 
+  # Block known malicious inputs, including Log4j exploit patterns.
+  rule {
+    name     = "AWSKnownBadInputsRules"
+    priority = 25
+
+    override_action {
+      none {}
+    }
+
+    statement {
+      managed_rule_group_statement {
+        name        = "AWSManagedRulesKnownBadInputsRuleSet"
+        vendor_name = "AWS"
+      }
+    }
+
+    visibility_config {
+      cloudwatch_metrics_enabled = true
+      metric_name                = "boundarypass-known-bad-inputs"
+      sampled_requests_enabled   = false
+    }
+  }
+
   # Block IPs exceeding approximately 2,000 requests in five minutes.
   rule {
     name     = "PerIPRateLimit"
