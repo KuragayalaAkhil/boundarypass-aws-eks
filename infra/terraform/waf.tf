@@ -1,21 +1,21 @@
-# Create a regional Web ACL that we will attach to the public ALB.
+# Create a regional Web ACL attached to the public ALB through the Ingress.
 resource "aws_wafv2_web_acl" "boundarypass" {
   name        = "boundarypass-waf"
   description = "BoundaryPass application traffic inspection"
   scope       = "REGIONAL"
 
-  # Allow traffic while rules are tested in Count mode.
+  # Allow requests that do not match a blocking rule.
   default_action {
     allow {}
   }
 
-  # Detect common web attack patterns without blocking yet.
+  # Enforce the AWS managed common rules using their default actions.
   rule {
     name     = "AWSCommonRules"
     priority = 10
 
     override_action {
-      count {}
+      none {}
     }
 
     statement {
@@ -32,13 +32,13 @@ resource "aws_wafv2_web_acl" "boundarypass" {
     }
   }
 
-  # Detect SQL injection patterns without blocking yet.
+  # Enforce the AWS managed SQL injection rules using their default actions.
   rule {
     name     = "AWSSQLInjectionRules"
     priority = 20
 
     override_action {
-      count {}
+      none {}
     }
 
     statement {
@@ -55,14 +55,13 @@ resource "aws_wafv2_web_acl" "boundarypass" {
     }
   }
 
-  # Count requests from IPs exceeding approximately 2,000 requests
-  # in five minutes. Blocking will be enabled after testing.
+  # Block IPs exceeding approximately 2,000 requests in five minutes.
   rule {
     name     = "PerIPRateLimit"
     priority = 30
 
     action {
-      count {}
+      block {}
     }
 
     statement {
@@ -92,7 +91,7 @@ resource "aws_wafv2_web_acl" "boundarypass" {
   }
 }
 
-# Show the Web ACL ARN so we can connect it to the ALB Ingress later.
+# Expose the Web ACL ARN used by the ALB Ingress annotation.
 output "waf_web_acl_arn" {
   description = "Regional WAF Web ACL ARN for the BoundaryPass ALB"
   value       = aws_wafv2_web_acl.boundarypass.arn
