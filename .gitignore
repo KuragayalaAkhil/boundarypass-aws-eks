@@ -14,3 +14,15 @@ __pycache__/
 
 # Local development database
 boundarypass.db
+
+# Generated test coverage
+coverage.xml
+htmlcov/
+
+# Saved Terraform plans and local plan output
+*.tfplan
+/destroy-plan.txt
+/restore-plan.txt
+
+# Temporary database administration manifest
+/infra/gitops/db-admin-temp.yaml
