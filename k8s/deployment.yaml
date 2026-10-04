@@ -33,11 +33,14 @@ spec:
       volumes:
         - name: tmp
           emptyDir: {}
+           # Spread each deployment revision across both availability zones.
       topologySpreadConstraints:
         - maxSkew: 1
           minDomains: 2
           topologyKey: topology.kubernetes.io/zone
           whenUnsatisfiable: DoNotSchedule
+          matchLabelKeys:
+            - pod-template-hash
           labelSelector:
             matchLabels:
               app: boundarypass
