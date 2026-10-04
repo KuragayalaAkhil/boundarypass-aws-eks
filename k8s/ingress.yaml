@@ -4,20 +4,33 @@ metadata:
   name: boundarypass
   annotations:
     checkov.io/skip1: CKV_K8S_21=Ingress stays with the live application in the default namespace
+
+    # Create a public ALB that routes traffic directly to application pods.
     alb.ingress.kubernetes.io/scheme: internet-facing
     alb.ingress.kubernetes.io/target-type: ip
     alb.ingress.kubernetes.io/healthcheck-path: /health
+
+    # Redirect HTTP requests to HTTPS.
     alb.ingress.kubernetes.io/listen-ports: '[{"HTTP":80},{"HTTPS":443}]'
     alb.ingress.kubernetes.io/ssl-redirect: "443"
+
+    # Prevent public access to the application's metrics endpoint.
     alb.ingress.kubernetes.io/actions.block-metrics: >-
       {"type":"fixed-response","fixedResponseConfig":{"contentType":"text/plain","statusCode":"403","messageBody":"Forbidden"}}
+
+    # Use the existing ACM certificate for HTTPS.
     alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:ap-south-1:697858907754:certificate/14163cd3-7744-4ff1-ad24-27b4c56a2d5b
+
+    # Attach the Terraform-created WAF; rules initially count matching requests.
+    alb.ingress.kubernetes.io/wafv2-acl-arn: arn:aws:wafv2:ap-south-1:697858907754:regional/webacl/boundarypass-waf/a48e3780-a0b5-4d40-9639-16e6b5afe1fa
+
 spec:
   ingressClassName: alb
   rules:
     - host: boundarypass.kuragayalas.xyz
       http:
         paths:
+          # Return HTTP 403 for public metrics requests.
           - path: /metrics
             pathType: Prefix
             backend:
@@ -25,6 +38,8 @@ spec:
                 name: block-metrics
                 port:
                   name: use-annotation
+
+          # Send all other requests to the application service.
           - path: /
             pathType: Prefix
             backend:

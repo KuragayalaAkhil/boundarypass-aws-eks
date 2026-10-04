@@ -13,6 +13,19 @@ grafana:
 prometheus:
   prometheusSpec:
     retention: 24h
+
+    # Store metrics on a persistent, encrypted 10 GiB EBS volume.
+    storageSpec:
+      volumeClaimTemplate:
+        spec:
+          storageClassName: gp3-encrypted
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 10Gi
+
+    # Set CPU and memory requirements for the Prometheus pod.
     resources:
       requests:
         cpu: 200m

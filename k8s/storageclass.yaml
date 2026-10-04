@@ -1,0 +1,20 @@
+# Provision encrypted gp3 EBS volumes for monitoring.
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: gp3-encrypted
+provisioner: ebs.csi.aws.com
+parameters:
+  type: gp3
+  encrypted: "true"
+  csi.storage.k8s.io/fstype: ext4
+
+# Choose the volume's Availability Zone after the pod is scheduled.
+volumeBindingMode: WaitForFirstConsumer
+
+# Allow a PVC's storage capacity to be increased later.
+allowVolumeExpansion: true
+
+# Delete the underlying EBS volume when its PVC is deleted.
+# This suits our lab teardown; snapshot first if metrics must be preserved.
+reclaimPolicy: Delete
