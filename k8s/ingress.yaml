@@ -22,7 +22,7 @@ metadata:
     alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:ap-south-1:697858907754:certificate/14163cd3-7744-4ff1-ad24-27b4c56a2d5b
 
     # Attach the Terraform-created WAF; rules initially count matching requests.
-    alb.ingress.kubernetes.io/wafv2-acl-arn: arn:aws:wafv2:ap-south-1:697858907754:regional/webacl/boundarypass-waf/a48e3780-a0b5-4d40-9639-16e6b5afe1fa
+    alb.ingress.kubernetes.io/wafv2-acl-arn: "arn:aws:wafv2:ap-south-1:697858907754:regional/webacl/boundarypass-waf/66f7b7ac-e9c4-485f-ab7e-d73240fd924b"
 
 spec:
   ingressClassName: alb
