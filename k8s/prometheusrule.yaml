@@ -1,0 +1,32 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: boundarypass-alerts
+  namespace: monitoring
+  labels:
+    release: monitoring
+spec:
+  groups:
+    - name: boundarypass.availability
+      rules:
+        - alert: BoundaryPassNoHealthyTargets
+          expr: |
+            sum(up{namespace="default",service="boundarypass"}) == 0
+            or absent(up{namespace="default",service="boundarypass"})
+          for: 2m
+          labels:
+            severity: critical
+          annotations:
+            summary: "BoundaryPass has no healthy scrape targets"
+            description: "All application metrics targets are down or missing for two minutes."
+
+        - alert: BoundaryPassReducedReplicas
+          expr: |
+            kube_deployment_status_replicas_available{namespace="default",deployment="boundarypass"} < 2
+            or absent(kube_deployment_status_replicas_available{namespace="default",deployment="boundarypass"})
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "BoundaryPass has fewer than two available replicas"
+            description: "The deployment has fewer than two available replicas, or its metric is missing, for five minutes."
