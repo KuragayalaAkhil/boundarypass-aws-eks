@@ -46,7 +46,7 @@ spec:
               app: boundarypass
       containers:
         - name: boundarypass
-          image: kuragayalaakhil/boundarypass:d09be28c2dbc33089e4c1b4319fc1d7777b2ef3e
+          image: kuragayalaakhil/boundarypass:5c8978512f010703f8fd630d4d829458a791c794
           imagePullPolicy: Always
           resources:
             requests:
