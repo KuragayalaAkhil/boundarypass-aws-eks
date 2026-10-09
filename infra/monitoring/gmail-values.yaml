@@ -1,0 +1,51 @@
+{
+  "alertmanager": {
+    "alertmanagerSpec": {
+      "secrets": [
+        "boundarypass-gmail"
+      ]
+    },
+    "config": {
+      "global": {
+        "resolve_timeout": "5m"
+      },
+      "route": {
+        "receiver": "null",
+        "group_by": [
+          "alertname",
+          "namespace"
+        ],
+        "group_wait": "30s",
+        "group_interval": "5m",
+        "repeat_interval": "4h",
+        "routes": [
+          {
+            "receiver": "gmail",
+            "matchers": [
+              "alertname=~\"BoundaryPass.*\""
+            ]
+          }
+        ]
+      },
+      "receivers": [
+        {
+          "name": "null"
+        },
+        {
+          "name": "gmail",
+          "email_configs": [
+            {
+              "to": "akhil300596@gmail.com",
+              "from": "akhil300596@gmail.com",
+              "smarthost": "smtp.gmail.com:587",
+              "auth_username": "akhil300596@gmail.com",
+              "auth_password_file": "/etc/alertmanager/secrets/boundarypass-gmail/smtp-password",
+              "require_tls": true,
+              "send_resolved": true
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
