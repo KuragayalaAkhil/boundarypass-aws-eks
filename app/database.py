@@ -34,6 +34,13 @@ if DATABASE_AUTH_MODE == "iam":
         connect_args={
             "sslmode": "verify-full",
             "sslrootcert": "/app/rds-global-bundle.pem",
+            # Bound connection attempts and detect broken TCP connections.
+            "connect_timeout": 10,
+            "keepalives": 1,
+            "keepalives_idle": 10,
+            "keepalives_interval": 5,
+            "keepalives_count": 3,
+            "tcp_user_timeout": 20000,
         },
     )
     rds = boto3.client("rds", region_name=AWS_REGION)
